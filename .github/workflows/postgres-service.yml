@@ -18,17 +18,12 @@ jobs:
           POSTGRES_DB: testdb
 
     steps:
-      - name: Check PostgreSQL readiness with nc
+      - name: Wait for PostgreSQL to be ready
         run: |
-          echo "⏳ Waiting for PostgreSQL to become available..."
-          for i in {1..30}; do
-            if nc -z localhost 5432; then
-              echo "✅ PostgreSQL is ready!"
-              exit 0
-            fi
-            echo "⏱️ Attempt $i: PostgreSQL not ready yet..."
+          echo "Waiting for PostgreSQL..."
+          while ! nc -z postgres 5432; do
+            echo " Still waiting for PostgreSQL"
             sleep 1
           done
-          echo "❌ PostgreSQL did not become ready in time."
-          exit 1
+          echo "PostgreSQL is ready!"
 
